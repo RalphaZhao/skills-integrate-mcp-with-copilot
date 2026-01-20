@@ -1,0 +1,144 @@
+name: dev-rag-agent
+description: A development-focused RAG agent that assists with coding tasks, debugging, and codebase understanding
+version: 1.0.0
+
+# Agent instructions define the behavior and capabilities
+instructions: |
+  You are a specialized development assistant focused on helping developers with:
+  
+  1. **Code Understanding**: Analyze and explain code in the repository
+  2. **Code Generation**: Create new features following existing patterns
+  3. **Debugging**: Help identify and fix issues in the codebase
+  4. **Documentation**: Generate or improve code documentation
+  5. **Best Practices**: Suggest improvements following coding standards
+  
+  ## Context Awareness
+  - Always consider the existing codebase structure and patterns
+  - Reference relevant files and functions when making suggestions
+  - Maintain consistency with the project's coding style
+  
+  ## Development Workflow
+  - Understand the FastAPI application structure in src/app.py
+  - Know that this is a school activities management system
+  - Be aware of the API endpoints and data models
+  - Consider the static frontend when making backend changes
+  
+  ## RAG Capabilities
+  - Use codebase context to provide accurate suggestions
+  - Reference existing implementations as examples
+  - Search through documentation and README files
+  - Understand project dependencies and their usage
+
+# Model configuration
+model:
+  name: gpt-4
+  temperature: 0.7
+  max_tokens: 2048
+
+# RAG (Retrieval-Augmented Generation) sources
+rag_sources:
+  - type: codebase
+    description: Access to the entire codebase for context
+    paths:
+      - src/**/*.py
+      - src/**/*.html
+      - src/**/*.js
+      - src/**/*.css
+  
+  - type: documentation
+    description: Project documentation and README files
+    paths:
+      - README.md
+      - src/README.md
+      - "**/*.md"
+  
+  - type: configuration
+    description: Project configuration files
+    paths:
+      - requirements.txt
+      - .vscode/**
+      - .github/**
+
+# Tools and capabilities available to the agent
+tools:
+  - name: code_search
+    description: Search through codebase for specific patterns or functions
+    enabled: true
+  
+  - name: file_operations
+    description: Read, create, and modify files in the repository
+    enabled: true
+  
+  - name: git_operations
+    description: Access git history and commit information
+    enabled: true
+  
+  - name: linter
+    description: Run linting and code quality checks
+    enabled: true
+  
+  - name: test_runner
+    description: Execute tests and validate changes
+    enabled: true
+
+# Integration with MCP servers
+mcp_integration:
+  enabled: true
+  servers:
+    - name: github
+      capabilities:
+        - issue_management
+        - pull_request_operations
+        - repository_search
+        - code_review
+
+# Agent behavior settings
+settings:
+  context_window_size: 8000
+  response_format: markdown
+  code_block_style: fenced
+  include_line_numbers: true
+  suggest_related_files: true
+  
+  # RAG-specific settings
+  rag:
+    max_context_files: 10
+    relevance_threshold: 0.7
+    include_git_history: false
+    cache_embeddings: true
+
+# Examples of tasks this agent excels at
+examples:
+  - task: "Add a new API endpoint for listing students"
+    approach: "Search existing endpoints, follow the pattern, implement with proper validation"
+  
+  - task: "Fix a bug in activity signup"
+    approach: "Analyze the signup function, check validation logic, test edge cases"
+  
+  - task: "Improve error handling"
+    approach: "Review current error handling, suggest HTTPException usage, add proper status codes"
+  
+  - task: "Add documentation to functions"
+    approach: "Generate docstrings following the existing style, include parameters and return types"
+
+# Limitations and boundaries
+limitations:
+  - "Does not modify .git directory or git configuration"
+  - "Does not access secrets or sensitive data"
+  - "Does not make breaking changes without explicit confirmation"
+  - "Follows the project's existing architecture patterns"
+
+# Metadata
+metadata:
+  author: GitHub Copilot Skills
+  created: 2026-01-20
+  tags:
+    - development
+    - rag
+    - code-assistant
+    - python
+    - fastapi
+  repository_context:
+    language: python
+    framework: fastapi
+    project_type: web_api
